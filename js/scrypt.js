@@ -432,11 +432,21 @@ async function cargarFetch() {
 }
 //cargo api sobre el precio de venta del dolar Crypto en argentina.
 async function cargaDolarPrecio() {
-    const urlLocal = "https://arsat.ramis.ar/api/prices/usdars";
-    const resp = await fetch(urlLocal);
-    const dataDolar = await resp.json();
-    precioDolar = parseInt(dataDolar[0].value);
-    cargarFetch();
+    const options = {
+        method: 'GET',
+        headers: {
+            'X-RapidAPI-Key': 'f19a3dadc3mshed47e963283b979p1319bajsn2f972f52df59',
+            'X-RapidAPI-Host': 'cotizacion-de-la-moneda.p.rapidapi.com'
+        }
+    };
+    fetch('https://cotizacion-de-la-moneda.p.rapidapi.com/v1/argentina', options)
+        .then(response => response.json())
+        .then(response => {
+            precioDolar = parseInt(response[0].sell);
+            cargarFetch();
+            console.log(response[0].sell)
+        })
+        .catch(err => console.error(err));
 }
 
 
