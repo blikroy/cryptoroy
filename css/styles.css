@@ -215,7 +215,7 @@ nav ul li p {
 .cerrarModales {
     position: absolute;
     width: 100vw;
-    height: 100vw;
+    height: 100vh;
 }
 .modalContainer {
     width: 600px;

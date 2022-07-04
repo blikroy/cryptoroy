@@ -94,7 +94,7 @@ function cargarModal(coin) {
             <button type="button" class="btn-comprar-modal" id="btnComprar">COMPRAR</button>
         </div>
     `;
-    //evento para captor valor del input "cantidad"
+    //evento para capturar valor del input "cantidad"
     let cantidad = document.getElementById("cantidad");
     let valor = document.getElementById("valor");
     let multiploTotal;
@@ -103,7 +103,7 @@ function cargarModal(coin) {
         //multiplico la cantidad del input por el valor de la moneda
         let multiploCantidad = e.srcElement.value * Number(coin.price);
 
-        //multiplico por el valor actual del dolar en argentina por el multiplo anterior
+        //multiplico por el valor actual del dolar blue en argentina por el multiplo anterior
         multiploTotal = multiploCantidad * precioDolar;
 
         //muestro el valor a pagar en pesos argentinos en la etiqueta p
@@ -146,11 +146,12 @@ class carritoItems {
         this.precio = objItems.precioCoin;
     }
 }
-//funcion parra cargar items al carrito y tambien al storage.
+//funcion para cargar items al carrito y tambien al storage.
 function cargarCarrito(data) {
     let repetido = carrito.find(c => c.id == data.uuid); //pregunto si el el objeto ya esta agregado a mi array
     if(repetido == undefined) {
         let cargarItem = new carritoItems(data)
+        //cargo datos a mi carrito enviando el constructor con sus respectivos valores
         carrito.push(cargarItem);
         //conviero el precio en pesos argentinos
         let precioArs = Number(cargarItem.precio).toLocaleString("es-AR", {minimumFractionDigits: 2, maximumFractionDigits: 2})
@@ -225,7 +226,11 @@ function cargarCarrito(data) {
 
         //detectamos el click en el boton Aceptar
         document.getElementById("btnAceptar").addEventListener('click', function() {
-            let posicion = carrito.findIndex(p => p.id == data.uuid); //calculo la posición del objeto.
+
+            //calculo la posición del objeto.
+            let posicion = carrito.findIndex(p => p.id == data.uuid); 
+
+            //me posiciono sobre los elemtos y le cambio los valores por los nuevos
             carrito[posicion].cantidad = data.cantidadCoin;
             carrito[posicion].precio = data.precioCoin;
 
@@ -315,9 +320,12 @@ function sumaTotal() {
     let suma = 0;
 
     for (sumaItem of carrito) {
+        //paso de string a numero el valor de precio de mi carrito
         let precioANumero = Number(sumaItem.precio)
-        suma = suma + (1 * precioANumero);
+        //recorro todo el carrito guardando y sumando por cada bloque.
+        suma = suma + precioANumero;
     }
+    //retorno el resultado final con formato de pesos argentinos
     return suma.toLocaleString("es-AR", {minimumFractionDigits: 2, maximumFractionDigits: 2});
 }
 
@@ -347,7 +355,7 @@ function finalizarCompra() {
     alertas("finalizar");
 }
 
-//funcion para mostrar los mensajes de éxito o error
+//funcion para mostrar alertas
 function alertas(alertas) {
     //le agrego estilo de css para poder visualizar el modal de alertas
     let abierto = document.getElementById("modalParaAlertas");
@@ -357,6 +365,7 @@ function alertas(alertas) {
     let cerrar = document.getElementById("modalParaCambio");
     cerrar.style.display = "none";
 
+    //alerta de éxito
     if(alertas == "exito"){
         document.getElementById("carritoExito").innerHTML = `
             <span style="color:#36BD94;">
@@ -374,6 +383,7 @@ function alertas(alertas) {
             abierto.style.display = "none";
         })
     }
+    //alerta de error
     if(alertas == "error"){
         document.getElementById("carritoExito").innerHTML = `
             <span style="color: #DB2304;">
@@ -392,6 +402,7 @@ function alertas(alertas) {
             abierto.style.display = "none";
         })
     }
+    //alerta de finalizar compra
     if(alertas == "finalizar"){
         document.getElementById("carritoExito").innerHTML = `
             <span style="color:#36BD94;">
@@ -430,14 +441,13 @@ async function cargarFetch() {
         })
         .catch(err => console.error(err));
 }
-//cargo api sobre el precio de venta del dolar Crypto en argentina.
+//cargo api sobre el precio de venta del dolar blue en argentina.
 async function cargaDolarPrecio() {
     fetch('https://api.bluelytics.com.ar/v2/latest')
         .then(response => response.json())
         .then(response => {
             precioDolar = parseInt(response.blue.value_sell);
             cargarFetch();
-            console.log(response.blue.value_sell)
         })
         .catch(err => console.error(err));
 }
@@ -497,7 +507,8 @@ $(document).ready(function(){
     $(".btn-finalizar-comprarl").on("click", function(){
         finalizarCompra();
     });
-    //libreria de carousel owl
+    
+    //libreria de carousel owl que a su vez funciona con la libreria jquery
     $('.owl-carousel').owlCarousel({
         loop:true,
         margin:10,
