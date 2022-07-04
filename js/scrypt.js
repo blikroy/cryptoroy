@@ -432,19 +432,12 @@ async function cargarFetch() {
 }
 //cargo api sobre el precio de venta del dolar Crypto en argentina.
 async function cargaDolarPrecio() {
-    const options = {
-        method: 'GET',
-        headers: {
-            'X-RapidAPI-Key': 'f19a3dadc3mshed47e963283b979p1319bajsn2f972f52df59',
-            'X-RapidAPI-Host': 'cotizacion-de-la-moneda.p.rapidapi.com'
-        }
-    };
-    fetch('https://cotizacion-de-la-moneda.p.rapidapi.com/v1/argentina', options)
+    fetch('https://api.bluelytics.com.ar/v2/latest')
         .then(response => response.json())
         .then(response => {
-            precioDolar = parseInt(response[0].sell);
+            precioDolar = parseInt(response.blue.value_sell);
             cargarFetch();
-            console.log(response[0].sell)
+            console.log(response.blue.value_sell)
         })
         .catch(err => console.error(err));
 }
