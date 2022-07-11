@@ -10,6 +10,8 @@ window.onload=()=>{
 };
 
 function cargarCoins() {
+    //ejecutamos animacion al esperar a que se carguen todos los elemntos de la pagina
+    $('.preLoader').fadeOut(1000);
     //se visibilizan el array en el Dom
     coins.map(coin => {
         //valido si el mercado del dia esta en alza o baja de cada moneda
@@ -73,7 +75,7 @@ function cargarModal(coin) {
             <div class="col-10">
                 <div class="text-small-modal">cantidad de ${coin.name} a comprar</div>
                 <input type="number" placeholder="Por favor ingresa la cantidad" class="input-modal" id="cantidad">
-                <small id="validarInput">Ingresa cantidad para poder continuar.</small>
+                <small id="validarInput"></small>
             </div>
         </div>
         <div class="col-12 text-center">
@@ -87,7 +89,7 @@ function cargarModal(coin) {
             </div>
             <div class="col-10">
                 <div class="text-small-modal">Valor en pesos Argentinos a pagar</div>
-                <p id="valor" class="valor-modal">0.00</p>
+                <p id="valor" class="valor-modal">0,00</p>
             </div>
         </div>
         <div class="col-12 text-center pt-3">
@@ -119,7 +121,9 @@ function cargarModal(coin) {
 
         //ejecuto validacion del campo cantidad para poder continuar
         if(cantidad.value == '') {
-            document.getElementById("validarInput").style.display = "block";
+            document.getElementById("validarInput").innerText = "Ingresa cantidad para poder continuar.";
+        }else if(cantidad.value <= 0) {
+            document.getElementById("validarInput").innerText = "Ingresa cantidad mayor a 0, tambien podes usar decimales, por ejemplo 0.5.";
         }else if(valor.dataset.number != multiploTotal) {  //ejecuto validacion si tratan de cambiar los datos del "data-numer" por consola
             //ejecuto la funcion de alertas, en este caso Error
             alertas("error");
@@ -331,28 +335,31 @@ function sumaTotal() {
 
 //funcion para finalizar compra
 function finalizarCompra() {
+    if(carrito.length == 0) {
+        alertas("error");
+    }else {
+        //vacio todo el localStorage
+        localStorage.clear();
 
-    //vacio todo el localStorage
-    localStorage.clear();
+        //elimino todas las filas del carrito en dom.
+        carrito.map(finalizar => {
+            let filaElemento = document.getElementById(`fila${finalizar.id}`);
+            document.getElementById("itemsCarrito").removeChild(filaElemento); //elimino la fila en dom
+        });
+        
+        //vacio todo el array de carrito
+        carrito.length = 0;
 
-    //elimino todas las filas del carrito en dom.
-    carrito.map(finalizar => {
-        let filaElemento = document.getElementById(`fila${finalizar.id}`);
-        document.getElementById("itemsCarrito").removeChild(filaElemento); //elimino la fila en dom
-    });
-    
-    //vacio todo el array de carrito
-    carrito.length = 0;
+        //actualizo numero de cantidad de items en el carrito
+        let cantidadDeitems = document.getElementById("cantidadDeItems");
+        cantidadDeitems.innerText = carrito.length;
 
-    //actualizo numero de cantidad de items en el carrito
-    let cantidadDeitems = document.getElementById("cantidadDeItems");
-    cantidadDeitems.innerText = carrito.length;
+        //se actualiza subtotal
+        document.getElementById("subtotal").innerText = `$${sumaTotal()} ARS`;
 
-    //se actualiza subtotal
-    document.getElementById("subtotal").innerText = `$${sumaTotal()} ARS`;
-
-    //se ejecuta alerta de finalizar
-    alertas("finalizar");
+        //se ejecuta alerta de finalizar
+        alertas("finalizar");
+    }
 }
 
 //funcion para mostrar alertas
@@ -446,19 +453,19 @@ async function cargaDolarPrecio() {
     fetch('https://api.bluelytics.com.ar/v2/latest')
         .then(response => response.json())
         .then(response => {
-            precioDolar = parseInt(response.blue.value_sell);
+            precioDolar = Number(response.blue.value_sell);
             cargarFetch();
         })
         .catch(err => console.error(err));
 }
-
-
 //libreria Jquery
 $(document).ready(function(){
-    //ejecutamos animacion al esperar a que se carguen todos los elemntos de la pagina
-    $(window).on('load', function(){
-        $('.preLoader').fadeOut(1000);
-    });
+
+    //   //se idetenfica padre en html y se le pasa el hijo que carga despues de jquery
+    //   $( "table" ).on( "click", "td", function() {
+    //     $( this ).toggleClass( "chosen" );
+    //   });
+
     //capto scroll para cambiar de color mi header
     $(window).scroll(function(e) {
         let scrollTop = $(window).scrollTop();

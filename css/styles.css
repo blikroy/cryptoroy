@@ -279,7 +279,6 @@ textarea:focus, input:focus{
 }
 #validarInput {
     color: #eb4d4b;
-    display: none;
 }
 .carrito-exito {
     padding: 30px;
